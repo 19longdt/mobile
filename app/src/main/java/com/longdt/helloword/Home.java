@@ -20,6 +20,9 @@ import com.longdt.helloword.ProductC.ProductHome;
 import com.longdt.helloword.entity.Account;
 import com.longdt.helloword.menu.MenuOptions;
 import com.longdt.helloword.mutilThread.MutilThread;
+import com.longdt.helloword.retrofit.RetrofitActivity;
+import com.longdt.helloword.service.MyService;
+import com.longdt.helloword.service.ServiceActivity;
 
 public class Home extends AppCompatActivity {
 
@@ -27,12 +30,15 @@ public class Home extends AppCompatActivity {
     private Button btnAS;
     private Button btnLogout;
     private Button btnMT;
-
+    private Button btnService;
+    private Button btnRetrofit;
 
     private void bindingView() {
         btnAS = findViewById(R.id.btnAS);
         btnLogout = findViewById(R.id.btnLogout);
         btnMT = findViewById(R.id.btnMThread);
+        btnService = findViewById(R.id.btnService);
+        btnRetrofit = findViewById(R.id.btnRetrofit);
     }
 
 
@@ -52,6 +58,14 @@ public class Home extends AppCompatActivity {
         });
         btnMT.setOnClickListener(view -> {
             Intent intent = new Intent(Home.this, MutilThread.class);
+            startActivity(intent);
+        });
+        btnService.setOnClickListener(view -> {
+            Intent intent = new Intent(Home.this, ServiceActivity.class);
+            startActivity(intent);
+        });
+        btnRetrofit.setOnClickListener(view -> {
+            Intent intent = new Intent(Home.this, RetrofitActivity.class);
             startActivity(intent);
         });
     }

@@ -14,9 +14,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.longdt.helloword.R;
 
+import java.io.BufferedInputStream;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 
 public class MutilThread extends AppCompatActivity {
 
@@ -27,15 +28,15 @@ public class MutilThread extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_mutilthread);
 
         img = findViewById(R.id.imgProbar);
         bar = findViewById(R.id.proBar);
-        bar.setVisibility(View.GONE);
         btn = findViewById(R.id.btnLoad);
 
         btn.setOnClickListener(view -> {
-            downloadImageAsyncTask asyncTask = new downloadImageAsyncTask();
-            asyncTask.execute("https://tophinhanhdep.com/wp-content/uploads/2021/10/2560X1440-Red-Gaming-Wallpapers.jpg");
+            downloadImageAsyncTask downloadImageAsyncTask = new downloadImageAsyncTask();
+            downloadImageAsyncTask.execute("https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg");
         });
 
     }
@@ -65,21 +66,23 @@ public class MutilThread extends AppCompatActivity {
         protected Bitmap doInBackground(String... strings) {
             try{
                 URL url = new URL(strings[0]);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setDoInput(true);
+                URLConnection connection = url.openConnection();
                 connection.connect();
-                InputStream inputStream = connection.getInputStream();
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inPreferredConfig = Bitmap.Config.RGB_565;
-                Bitmap image = BitmapFactory.decodeStream(inputStream, null, options);
-                int per = 0;
-                while(per < 100){
-                    publishProgress(per++);
-                    Thread.sleep(100);
+                int lengthOfFile = connection.getContentLength();
+                InputStream input = new BufferedInputStream(url.openStream(), 8192);
+
+                byte data[] = new byte[1024];
+                long total = 0;
+                int count;
+                while ((count = input.read(data)) != -1) {
+                    total += count;
+                    publishProgress((int) ((total * 100) / lengthOfFile));
                 }
+                Bitmap image = BitmapFactory.decodeStream(url.openStream());
 
                 return image;
-            }catch (Exception e){
+
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return null;
